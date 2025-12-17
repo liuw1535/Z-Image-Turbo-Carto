@@ -6,11 +6,21 @@
 import os
 
 # --- 路径配置 ---
-# 基础模型路径 (请确保该路径下包含完整的 diffusers 模型文件)
-MODEL_PATH = "./Z-Image-Model"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# LoRA 文件路径 (请修改为您实际的文件名)
-LORA_PATH = "./Technically_Color_Z_Image_Turbo_v1_renderartist_2000.safetensors"
+# 基础模型路径 (请确保该路径下包含完整的 diffusers 模型文件)
+MODEL_PATH = os.path.join(BASE_DIR, "Z-Image-Model")
+
+# LoRA 文件路径
+LORA_PATH = os.path.join(BASE_DIR, "Technically_Color_Z_Image_Turbo_v1_renderartist_2000.safetensors")
+
+# 输出与数据库路径
+OUTPUT_DIR = os.path.join(BASE_DIR, "outputs")
+DB_PATH = os.path.join(BASE_DIR, "database", "history.db")
+
+# 确保目录存在
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 # --- 默认生成参数 ---
 DEFAULT_PROMPT = "A cinematic shot of a cyberpunk city, neon lights, rain, high detail, 8k"
@@ -28,5 +38,5 @@ DEFAULT_LORA_SCALE = 1.3
 DEFAULT_LORA_ENABLE = True
 
 # --- 系统配置 ---
-# 代理设置 (解决 Gradio 本地连接报 502 错误的问题)
+# 代理设置 (解决本地连接问题)
 os.environ['no_proxy'] = 'localhost,127.0.0.1,0.0.0.0'
