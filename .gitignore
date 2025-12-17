@@ -35,3 +35,7 @@ __pycache__/
 
 # 日志文件
 *.log
+
+# 输出成果
+outputs/*
+
