@@ -9,7 +9,7 @@
   <!-- 1. 引入核心库 (更换为 jsDelivr CDN，更稳定) -->
   <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- [关键修复] 引入 Lucide UMD 版本，确保全局对象存在 -->
+  <!-- 引入 Lucide UMD 版本 -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
 
   <!-- 2. 配置 Tailwind 主题 -->
@@ -47,7 +47,6 @@
       background: #52525b;
     }
 
-    /* 隐藏数字输入框的箭头 */
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -58,7 +57,6 @@
       display: none;
     }
 
-    /* 历史记录卡片悬停效果 */
     .history-card .delete-btn {
       opacity: 0;
       transform: scale(0.9);
@@ -70,7 +68,6 @@
       transform: scale(1);
     }
 
-    /* 提示词区域自定义滚动条 */
     .prompt-scroll::-webkit-scrollbar {
       width: 4px;
     }
@@ -79,7 +76,6 @@
       background: #52525b;
     }
 
-    /* Lightbox 信息面板过渡动画 */
     .lightbox-info {
       transition: opacity 0.3s ease, transform 0.3s ease;
     }
@@ -97,11 +93,9 @@
         <div class="bg-brand-600/20 p-1.5 rounded-lg">
           <i data-lucide="zap" class="text-brand-500 w-5 h-5"></i>
         </div>
-        <!-- [修改] 项目名称改为 Z-Image Carto -->
         <h1 class="font-bold text-lg tracking-tight">Z-Image <span class="text-zinc-500 font-normal">Carto</span></h1>
       </div>
 
-      <!-- 状态指示器 -->
       <div class="flex items-center gap-4 text-xs font-mono text-zinc-400">
         <div class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-zinc-950 border border-zinc-800">
           <div class="flex items-center gap-1.5">
@@ -115,40 +109,37 @@
       </div>
     </header>
 
-    <!-- === 主内容区 (Flex Row) === -->
+    <!-- === 主内容区 === -->
     <div class="flex-1 flex overflow-hidden">
 
-      <!-- 1. 左侧：历史记录列表 (History Sidebar) -->
+      <!-- 1. 左侧：历史记录列表 -->
       <div class="w-80 bg-zinc-900 border-r border-zinc-800 flex flex-col shrink-0 z-20">
         <div class="p-3 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50 backdrop-blur">
           <h3 class="text-xs font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
             <i data-lucide="history" class="w-3.5 h-3.5"></i> 历史记录
           </h3>
-          <button @click="fetchHistory"
+          <!-- 刷新按钮：点击回到顶部并重新加载 -->
+          <button @click="fetchHistory(true)"
                   class="text-zinc-500 hover:text-brand-500 transition-colors p-1 rounded hover:bg-zinc-800"
-                  title="刷新历史">
+                  title="刷新列表">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
           </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-3 space-y-3">
+        <div class="flex-1 overflow-y-auto p-3 space-y-3" id="history-container">
           <div v-for="item in history" :key="item.id"
                class="history-card relative flex gap-3 p-2 rounded-lg border cursor-pointer transition-all bg-zinc-950/50 group"
                :class="currentImage && currentImage.id === item.id ? 'border-brand-500/50 bg-brand-500/5 ring-1 ring-brand-500/20' : 'border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900'"
                @click="selectHistoryItem(item)">
 
-            <!-- 缩略图 -->
             <div class="w-20 h-20 shrink-0 rounded overflow-hidden bg-zinc-900 border border-zinc-800 relative">
               <img :src="item.url" class="w-full h-full object-cover">
             </div>
 
-            <!-- 详细信息 -->
             <div class="flex-1 flex flex-col justify-between min-w-0 py-0.5">
-              <!-- [修改] 标题行 (截取 Prompt 前10个字符) -->
               <div class="flex justify-between items-start mb-1 pr-6 relative">
                 <span class="text-xs font-bold text-zinc-200 truncate" :title="item.prompt">{{ item.title || '无标题'
                   }}</span>
-                <!-- 删除按钮 -->
                 <button @click.stop="deleteHistoryItem(item.id)"
                         class="delete-btn absolute -top-1 -right-1 p-1.5 text-zinc-400 hover:text-red-400 hover:bg-zinc-800 rounded-md transition-all"
                         title="删除记录">
@@ -156,15 +147,12 @@
                 </button>
               </div>
 
-              <!-- 日期 -->
               <div class="text-[10px] text-zinc-500 font-mono mb-1.5">{{ formatDate(item.created_at) }}</div>
 
-              <!-- 参数网格 -->
               <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px] text-zinc-500 font-mono leading-tight">
                 <div>尺寸: <span class="text-zinc-300">{{ item.width }}x{{ item.height }}</span></div>
                 <div>耗时: <span class="text-zinc-300">{{ item.duration ? item.duration.toFixed(1) : '-' }}s</span></div>
                 <div>步数: <span class="text-zinc-300">{{ item.steps }}</span></div>
-                <!-- [修改] 系数 -> CFG -->
                 <div>CFG: <span class="text-zinc-300">{{ item.cfg }}</span></div>
                 <div class="col-span-2 text-[10px] text-zinc-500 mt-0.5 border-t border-zinc-800 pt-0.5"
                      v-if="item.fileSize">
@@ -172,6 +160,17 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- [新增] 加载更多按钮 -->
+          <div v-if="hasMoreHistory" class="pt-2 pb-4 text-center">
+            <button @click="loadMoreHistory"
+                    class="text-xs text-zinc-500 hover:text-brand-500 transition-colors flex items-center justify-center gap-1 mx-auto py-2 px-4 rounded hover:bg-zinc-900 w-full border border-dashed border-zinc-800 hover:border-brand-500/50">
+              <i data-lucide="arrow-down-circle" class="w-3.5 h-3.5"></i> 加载更多
+            </button>
+          </div>
+          <div v-else-if="history.length > 0" class="pt-4 pb-8 text-center text-[10px] text-zinc-600">
+            —— 已显示全部记录 ——
           </div>
         </div>
       </div>
@@ -363,7 +362,7 @@
             <img :src="currentImage.url" class="max-w-full max-h-[70vh] object-contain block"
                  @click="openLightbox(currentImage)">
 
-            <!-- 悬浮工具栏 (按钮居中对齐修复: w-36 fixed width + flex + justify-center + items-center + whitespace-nowrap) -->
+            <!-- 悬浮工具栏 -->
             <div class="absolute top-4 right-4 flex flex-col gap-2">
               <button @click="openLightbox(currentImage)"
                       class="flex items-center justify-center gap-2 w-36 h-10 bg-black/60 hover:bg-white/10 text-white rounded-lg backdrop-blur-md border border-white/10 transition-colors shadow-lg group"
@@ -380,7 +379,7 @@
             </div>
           </div>
 
-          <!-- 提示词展示区域 (位于图片下方) -->
+          <!-- 提示词展示区域 -->
           <div
                class="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl p-4 flex gap-4 shadow-lg backdrop-blur-sm">
             <div class="min-w-0 flex-1 flex flex-col gap-2">
@@ -390,7 +389,6 @@
                 <div class="text-[10px] text-zinc-500 uppercase tracking-wider font-bold flex items-center gap-2">
                   <i data-lucide="text-quote" class="w-3 h-3 text-brand-500"></i> 正面提示词
                 </div>
-                <!-- 复制按钮 (指定 type='prompt') -->
                 <button @click="copyText(currentImage.meta.prompt, 'prompt')"
                         class="text-zinc-500 hover:text-brand-400 transition-colors flex items-center gap-1 text-[10px]"
                         title="复制正面提示词">
@@ -406,14 +404,12 @@
                 {{ currentImage.meta.prompt }}
               </div>
 
-              <!-- 负面提示词区域 (如有) -->
+              <!-- 负面提示词区域 -->
               <div v-if="currentImage.meta.negative_prompt" class="mt-1 pt-2 border-t border-zinc-800/50">
-                <!-- 负面提示词 Header -->
                 <div class="flex items-center justify-between mb-1">
                   <div class="text-[10px] text-zinc-600 uppercase tracking-wider font-bold flex items-center gap-2">
                     <i data-lucide="shield-alert" class="w-3 h-3 text-zinc-500"></i> 负面提示词
                   </div>
-                  <!-- 复制按钮 (指定 type='negative') -->
                   <button @click="copyText(currentImage.meta.negative_prompt, 'negative')"
                           class="text-zinc-500 hover:text-brand-400 transition-colors flex items-center gap-1 text-[10px]"
                           title="复制负面提示词">
@@ -422,8 +418,6 @@
                     <span v-else class="text-emerald-500">已复制!</span>
                   </button>
                 </div>
-
-                <!-- 负面提示词 Content -->
                 <div
                      class="text-xs text-zinc-500 font-mono leading-relaxed line-clamp-2 hover:line-clamp-none transition-all cursor-text select-text break-words whitespace-pre-wrap">
                   {{ currentImage.meta.negative_prompt }}
@@ -432,7 +426,7 @@
             </div>
           </div>
 
-          <!-- 底部属性信息栏 (全中文汉化) -->
+          <!-- 底部属性信息栏 -->
           <div
                class="bg-zinc-900 border border-zinc-800 rounded-full px-6 py-2 flex items-center gap-6 text-xs text-zinc-300 font-mono shadow-xl backdrop-blur-sm">
             <div class="flex items-center gap-2">
@@ -445,7 +439,6 @@
             <div class="w-px h-3 bg-zinc-800"></div>
             <div><span class="text-zinc-500">步数:</span> {{ currentImage.meta.steps }}</div>
             <div class="w-px h-3 bg-zinc-800"></div>
-            <!-- [修改] 系数 -> CFG -->
             <div><span class="text-zinc-500">CFG:</span> {{ currentImage.meta.cfg }}</div>
             <div class="w-px h-3 bg-zinc-800"></div>
             <div><span class="text-zinc-500">耗时:</span> {{ currentImage.duration ? currentImage.duration.toFixed(1) :
@@ -459,12 +452,12 @@
       </main>
     </div>
 
-    <!-- 全屏 Lightbox (汉化) - 修改：点击切换信息显隐 -->
+    <!-- 全屏 Lightbox -->
     <div v-if="lightboxOpen"
          class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-8 backdrop-blur-md"
          @click="lightboxOpen = false">
 
-      <!-- 图片主体 (阻止冒泡，点击切换 infoShow) -->
+      <!-- 图片主体 -->
       <img :src="lightboxImage.url" class="max-w-full max-h-full shadow-2xl rounded-sm cursor-zoom-out"
            @click.stop="lightboxInfoShow = !lightboxInfoShow">
 
@@ -473,7 +466,7 @@
         <i data-lucide="x" class="w-8 h-8"></i>
       </button>
 
-      <!-- 参数悬浮窗 (默认不显示 opacity-0) -->
+      <!-- 参数悬浮窗 -->
       <div class="absolute bottom-8 left-1/2 -translate-x-1/2 max-w-3xl w-full bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-sm shadow-2xl lightbox-info"
            :class="lightboxInfoShow ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'"
            @click.stop>
@@ -501,7 +494,7 @@
         </button>
       </div>
 
-      <!-- 信息开关提示 (仅当 info 隐藏时显示) -->
+      <!-- 信息开关提示 -->
       <div v-if="!lightboxInfoShow" class="absolute bottom-8 text-white/30 text-xs pointer-events-none animate-pulse">
         点击图片显示详细信息
       </div>
@@ -523,8 +516,13 @@
         const history = ref([]);
         const lightboxOpen = ref(false);
         const lightboxImage = ref(null);
-        const lightboxInfoShow = ref(false); // [修改] 默认为 false，实现全屏时不遮挡
+        const lightboxInfoShow = ref(false); // 默认隐藏信息
         const copiedField = ref(null);
+
+        // [新增] 分页相关状态
+        const historyOffset = ref(0);
+        const hasMoreHistory = ref(true);
+        const HISTORY_LIMIT = 20;
 
         // 参数表单
         const params = ref({
@@ -558,12 +556,12 @@
           }
           try {
             return new Intl.DateTimeFormat('zh-CN', {
-              year: 'numeric', // [修改] 增加年份
+              year: 'numeric',
               month: '2-digit',
               day: '2-digit',
               hour: '2-digit',
               minute: '2-digit',
-              second: '2-digit', // [修改] 增加秒
+              second: '2-digit',
               hour12: false,
               timeZone: 'Asia/Shanghai'
             }).format(utcDate).replace(/\//g, '-');
@@ -614,11 +612,24 @@
           }
         };
 
-        // 获取历史记录
-        const fetchHistory = async () => {
+        // [修改] 获取历史记录 (支持分页)
+        const fetchHistory = async (reset = false) => {
+          if (reset) {
+            historyOffset.value = 0;
+            history.value = [];
+            hasMoreHistory.value = true;
+          }
+
+          if (!hasMoreHistory.value) return;
+
           try {
-            const res = await fetch(`${API_BASE}/api/history?limit=20`);
+            const res = await fetch(`${API_BASE}/api/history?limit=${HISTORY_LIMIT}&offset=${historyOffset.value}`);
             const data = await res.json();
+
+            if (data.length < HISTORY_LIMIT) {
+              hasMoreHistory.value = false;
+            }
+
             const processedHistory = await Promise.all(data.map(async (item) => {
               const url = `${API_BASE}${item.url}`;
               const fileSize = await fetchImageSize(url);
@@ -635,9 +646,21 @@
                 meta: item
               };
             }));
-            history.value = processedHistory;
-            // 注意：不再自动选中第一张图，保持 currentImage 为 null
+
+            if (reset) {
+              history.value = processedHistory;
+            } else {
+              history.value = [...history.value, ...processedHistory];
+            }
+
+            historyOffset.value += HISTORY_LIMIT;
+
           } catch (e) { console.error(e); }
+        };
+
+        // [新增] 加载更多
+        const loadMoreHistory = () => {
+          fetchHistory(false);
         };
 
         // 生成图片
@@ -681,7 +704,9 @@
 
             // 2. 生成结束：显示新图片
             currentImage.value = newImage;
-            await fetchHistory();
+
+            // [修改] 生成完后刷新，只重置列表显示最新
+            fetchHistory(true);
 
           } catch (e) {
             alert("生成失败: " + e.message);
@@ -714,7 +739,7 @@
             await fetch(`${API_BASE}/api/history/${id}`, { method: 'DELETE' });
             history.value = history.value.filter(i => i.id !== id);
             if (currentImage.value && currentImage.value.id === id) {
-              currentImage.value = null; // 删除当前显示图片后，回到空状态
+              currentImage.value = null;
             }
           } catch (e) { alert("删除失败"); }
         };
@@ -722,7 +747,7 @@
         const openLightbox = (img) => {
           lightboxImage.value = img;
           lightboxOpen.value = true;
-          lightboxInfoShow.value = false; // [修改] 默认为 false，实现纯净预览
+          lightboxInfoShow.value = false; // 默认隐藏信息
         };
 
         const setSize = (w, h) => {
@@ -732,11 +757,10 @@
 
         onMounted(() => {
           fetchStatus();
-          fetchHistory();
+          fetchHistory(true); // 初始加载
           renderIcons();
         });
 
-        // [关键修复] 使用 onUpdated 而不是 updated，并正确地从 Vue 中解构出来
         onUpdated(() => {
           renderIcons();
         });
@@ -744,8 +768,8 @@
         return {
           status, params, isGenerating, generationTimer,
           currentImage, history, lightboxOpen, lightboxImage, lightboxInfoShow,
-          generateImage, setSize, fetchHistory, selectHistoryItem,
-          deleteHistoryItem, openLightbox, reuseParams, formatDate, copyText, copiedField
+          generateImage, setSize, fetchHistory, loadMoreHistory, hasMoreHistory, // 导出新方法和状态
+          selectHistoryItem, deleteHistoryItem, openLightbox, reuseParams, formatDate, copyText, copiedField
         };
       }
     }).mount('#app');
