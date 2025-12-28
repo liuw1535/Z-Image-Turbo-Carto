@@ -134,5 +134,5 @@ app.mount("/", StaticFiles(directory="web", html=True), name="web")
 
 if __name__ == "__main__":
     print("🚀 Z-Image Carto 全栈版已启动!")
-    print("👉 请访问: http://127.0.0.1:8888")
-    uvicorn.run("main:app", host="127.0.0.1", port=8888, reload=True)
+    print("👉 请访问: http://127.0.0.1:7860")
+    uvicorn.run("main:app", host="127.0.0.1", port=7860, reload=True)
