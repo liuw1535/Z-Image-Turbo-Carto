@@ -8,8 +8,14 @@ import os
 # --- 路径配置 ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# 检测是否在 Kaggle 环境
+IS_KAGGLE = os.path.exists('/kaggle')
+
 # 基础模型路径 (请确保该路径下包含完整的 diffusers 模型文件)
-MODEL_PATH = os.path.join("/", "Z-Image-Model")
+if IS_KAGGLE:
+    MODEL_PATH = "/Z-Image-Model"  # Kaggle
+else:
+    MODEL_PATH = os.path.join(BASE_DIR, "Z-Image-Model")  # 本地项目目录
 
 # LoRA 文件路径
 LORA_PATH = os.path.join(BASE_DIR, "Technically_Color_Z_Image_Turbo_v1_renderartist_2000.safetensors")
