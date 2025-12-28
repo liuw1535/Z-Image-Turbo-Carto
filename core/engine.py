@@ -43,6 +43,7 @@ class ZImageEngine:
                 config.MODEL_PATH,
                 torch_dtype=self.dtype,
                 trust_remote_code=True,
+                local_files_only=True,
             )
             self.pipe.to(self.device)
             
