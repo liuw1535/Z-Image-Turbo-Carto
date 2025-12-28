@@ -9,7 +9,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 基础模型路径 (请确保该路径下包含完整的 diffusers 模型文件)
-MODEL_PATH = os.path.join(BASE_DIR, "Z-Image-Model")
+MODEL_PATH = os.path.join("/", "Z-Image-Model")
 
 # LoRA 文件路径
 LORA_PATH = os.path.join(BASE_DIR, "Technically_Color_Z_Image_Turbo_v1_renderartist_2000.safetensors")
