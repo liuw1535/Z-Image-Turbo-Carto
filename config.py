@@ -8,7 +8,7 @@ import os
 # --- 路径配置 ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# 检测是否在 Kaggle 环境
+# 检测是否在 Kaggle 环境 (T4 GPU 需要强制 CPU Offload)
 IS_KAGGLE = os.path.exists('/kaggle')
 
 # 基础模型路径 (请确保该路径下包含完整的 diffusers 模型文件)

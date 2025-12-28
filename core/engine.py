@@ -78,16 +78,15 @@ class ZImageEngine:
             # MPS 显存足够时关闭 Tiling 以获得最佳画质
             pass 
         elif self.device == "cuda":
-            # 12GB 显存用户必须开启 CPU Offload
+            # Kaggle T4 或 12GB 显存用户必须开启 CPU Offload
             # 这会将暂时不用的模型层移到内存，腾出显存给 VAE 解码
             self.pipe.enable_model_cpu_offload() # type: ignore
+            print("🧠 [Optim] CUDA: CPU Offload 已开启")
             
-            # [建议开启] VAE Tiling 也是防止 12G 显存解码爆显存/黑屏的关键
+            # [建议开启] VAE Tiling 也是防止显存解码爆显存/黑屏的关键
             if hasattr(self.pipe, "enable_vae_tiling"):
                 self.pipe.enable_vae_tiling() # type: ignore
                 print("🧠 [Optim] CUDA: VAE Tiling 已开启 (节省显存)")
-            
-            print("🧠 [Optim] CUDA: CPU Offload 已开启")
 
     # ... (后面的 update_lora 和 generate 保持不变) ...
     def update_lora(self, enable, scale):
