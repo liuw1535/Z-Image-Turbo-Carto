@@ -39,8 +39,10 @@ class ZImageEngine:
             if torch.backends.mps.is_available(): torch.mps.empty_cache()
 
         try:
+            import os
+            model_path = os.path.abspath(config.MODEL_PATH)
             self.pipe = DiffusionPipeline.from_pretrained(
-                config.MODEL_PATH,
+                model_path,
                 torch_dtype=self.dtype,
                 trust_remote_code=True,
                 local_files_only=True,
